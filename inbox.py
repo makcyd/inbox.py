@@ -18,11 +18,11 @@ class InboxServer(smtpd.SMTPServer, object):
         super(InboxServer, self).__init__(*args, **kwargs)
         self._handler = handler
 
-    def process_message(self, peer, mailfrom, rcpttos, data):
+    def process_message(self, peer, mailfrom, rcpttos, data, mail_options=None, rcpt_options=None):
         log.info('Collating message from {0}'.format(mailfrom))
-        subject = Parser().parsestr(data)['subject']
-        log.debug(dict(to=rcpttos, sender=mailfrom, subject=subject, body=data))
-        return self._handler(to=rcpttos, sender=mailfrom, subject=subject, body=data)
+        subject = Parser().parsestr(data.decode('utf-8'))['subject']
+        log.debug(dict(to=rcpttos, sender=mailfrom, subject=subject, body=data.decode('utf-8')))
+        return self._handler(to=rcpttos, sender=mailfrom, subject=subject, body=data.decode('utf-8'))
 
 
 class Inbox(object):
